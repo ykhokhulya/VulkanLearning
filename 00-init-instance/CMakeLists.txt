@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7.2)
-project(00-instance-and-physical-device-selection)
+project(00-init-instance)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
@@ -10,6 +10,9 @@ find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE PROJECT_SOURCES src/*.cpp)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+target_compile_definitions(
+    ${PROJECT_NAME}
+	PRIVATE -DGLFW_INCLUDE_VULKAN)
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE Vulkan::Vulkan

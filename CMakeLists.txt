@@ -6,4 +6,4 @@ if(MSVC)
   set(VULKAN_SDK C:/VulkanSDK/1.1.73.0)
 endif()
 
-add_subdirectory(00-instance-and-physical-device-selection)
+add_subdirectory(00-init-instance)

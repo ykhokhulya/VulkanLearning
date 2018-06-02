@@ -26,7 +26,17 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
-#include <vulkan/vulkan.h>
+
+#define FAIL_IF_NOT_SUCCESS(FunctionCall, ActionName)                     \
+    if (VkResult result = (FunctionCall); result != VK_SUCCESS)           \
+    {                                                                     \
+        std::cerr << "'" << (ActionName) << "' failed. result=" << result \
+                  << std::endl;                                           \
+        return EXIT_FAILURE;                                              \
+    }
+
+constexpr int c_width = 640;
+constexpr int c_height = 480;
 
 int main(int argc, char** argv)
 {
@@ -43,7 +53,8 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Vulkan", nullptr, nullptr);
+    GLFWwindow* window =
+        glfwCreateWindow(c_width, c_height, "Vulkan", nullptr, nullptr);
 
     VkApplicationInfo app_info = {};
     app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -56,49 +67,20 @@ int main(int argc, char** argv)
     uint32_t extensions_num = 0;
     const char** extensions = glfwGetRequiredInstanceExtensions(&extensions_num);
 
-    uint32_t available_extensions_num;
-    VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(
-        const char* pLayerName,
-        uint32_t* pPropertyCount,
-        VkExtensionProperties* pProperties);
+    VkInstanceCreateInfo instance_info = {};
+    instance_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    instance_info.pApplicationInfo = &app_info;
+    instance_info.enabledExtensionCount = extensions_num;
+    instance_info.ppEnabledExtensionNames = extensions;
 
-    uint32_t layers_num;
-    vkEnumerateInstanceLayerProperties(&layers_num, nullptr);
-    std::vector<VkLayerProperties> available_layers(layers_num);
-    vkEnumerateInstanceLayerProperties(&layers_num, available_layers.data());
-
-    for (auto&& layer : available_layers)
-    {
-        std::cout << "[" << layer.layerName << "] " << layer.description
-                  << std::endl;
-    }
-
-    VkInstanceCreateInfo instance_cinfo = {};
-    instance_cinfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    instance_cinfo.pApplicationInfo = &app_info;
-    instance_cinfo.enabledLayerCount = 0;
-    instance_cinfo.enabledExtensionCount = extensions_num;
-    instance_cinfo.ppEnabledExtensionNames = extensions;
-
-    VkInstance instance;
-    if (VkResult result = vkCreateInstance(&instance_cinfo, nullptr, &instance);
-        result != VK_SUCCESS)
-    {
-        std::cout << "Failed to create VK instance. result=" << result
-                  << std::endl;
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
+    VkInstance instance = {};
+    FAIL_IF_NOT_SUCCESS(
+        vkCreateInstance(&instance_info, nullptr, &instance), "CreateInstance");
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
     }
-
-    vkDestroyInstance(instance, nullptr);
-    glfwDestroyWindow(window);
-    glfwTerminate();
 
     return EXIT_SUCCESS;
 }
