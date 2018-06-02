@@ -8,3 +8,4 @@ endif()
 
 add_subdirectory(00-init-instance)
 add_subdirectory(01-enumarate-devices)
+add_subdirectory(02-init-device)
