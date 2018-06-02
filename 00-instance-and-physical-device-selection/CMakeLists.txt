@@ -5,14 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 set(CMAKE_CXX_EXTENSIONS off)
 
-find_package(PkgConfig REQUIRED)
-
-pkg_search_module(GLFW REQUIRED IMPORTED_TARGET glfw3)
-pkg_search_module(Vulkan REQUIRED IMPORTED_TARGET vulkan)
+find_package(glfw3 REQUIRED)
+find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE PROJECT_SOURCES src/*.cpp)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 target_link_libraries(
     ${PROJECT_NAME}
-    PRIVATE PkgConfig::Vulkan
-    PRIVATE PkgConfig::GLFW)
+    PRIVATE Vulkan::Vulkan
+    PRIVATE glfw)
