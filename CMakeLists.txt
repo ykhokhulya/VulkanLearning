@@ -3,6 +3,7 @@ project(VulkanLearning)
 
 if(MSVC)
   list(APPEND CMAKE_PREFIX_PATH C:/Glfw3)
+  list(APPEND CMAKE_PREFIX_PATH C:/glm)
   set(VULKAN_SDK C:/VulkanSDK/1.1.73.0)
 endif()
 
@@ -12,3 +13,4 @@ add_subdirectory(02-init-device)
 add_subdirectory(03-init-command-buffer)
 add_subdirectory(04-init-swapchain)
 add_subdirectory(05-init-depth-buffer)
+add_subdirectory(06-init-uniform-buffer)
